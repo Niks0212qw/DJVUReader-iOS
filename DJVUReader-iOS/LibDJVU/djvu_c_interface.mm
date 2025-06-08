@@ -58,7 +58,15 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
     ctx->file_path = file_path;
     
     NSString *nsFilePath = [NSString stringWithUTF8String:file_path];
+    if (!nsFilePath) {
+        NSLog(@"❌ Failed to convert file path to NSString: %s", file_path);
+        return -1;
+    }
+    
     NSString *fileExtension = [[nsFilePath pathExtension] lowercaseString];
+    
+    NSLog(@"📁 Processing file: %@", nsFilePath);
+    NSLog(@"📁 File extension: %@", fileExtension);
     
     // Check if it's a PDF file first
     if ([fileExtension isEqualToString:@"pdf"]) {
@@ -70,23 +78,31 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
     
     // Check if file exists and is accessible
     if (![[NSFileManager defaultManager] fileExistsAtPath:nsFilePath]) {
-        NSLog(@"❌ DJVU file does not exist: %s", file_path);
+        NSLog(@"❌ DJVU file does not exist: %@", nsFilePath);
         return -1;
     }
     
     // Try to read file data to ensure we have access
     NSData *fileData = [NSData dataWithContentsOfFile:nsFilePath];
     if (!fileData || fileData.length < 16) {
-        NSLog(@"❌ Cannot read DJVU file or file too small: %s", file_path);
+        NSLog(@"❌ Cannot read DJVU file or file too small: %@ (size: %lu)", nsFilePath, (unsigned long)fileData.length);
         return -1;
     }
     
-    NSLog(@"📖 Loading DJVU file: %s (size: %lu bytes)", file_path, (unsigned long)fileData.length);
+    NSLog(@"📖 Loading DJVU file: %@ (size: %lu bytes)", nsFilePath, (unsigned long)fileData.length);
     
-    // Create document from file data instead of filename
-    ctx->document = ddjvu_document_create_by_filename(ctx->ddjvu_context, file_path, FALSE);
+    // For files with non-ASCII characters, we need to ensure proper encoding
+    // Convert the NSString path back to UTF-8 C string to ensure proper encoding
+    const char* utf8_path = [nsFilePath UTF8String];
+    if (!utf8_path) {
+        NSLog(@"❌ Failed to get UTF8 representation of path");
+        return -1;
+    }
+    
+    // Create document from file data instead of filename for better Unicode support
+    ctx->document = ddjvu_document_create_by_filename(ctx->ddjvu_context, utf8_path, FALSE);
     if (!ctx->document) {
-        NSLog(@"❌ Failed to create djvu document");
+        NSLog(@"❌ Failed to create djvu document for path: %@", nsFilePath);
         return -1;
     }
     

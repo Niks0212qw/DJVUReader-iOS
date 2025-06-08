@@ -1,0 +1,591 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		E0C520E42DF4C8C7009D84A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E0C520CE2DF4C8C5009D84A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0C520D52DF4C8C5009D84A3;
+			remoteInfo = "DJVUReader-iOS";
+		};
+		E0C520EE2DF4C8C7009D84A3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E0C520CE2DF4C8C5009D84A3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E0C520D52DF4C8C5009D84A3;
+			remoteInfo = "DJVUReader-iOS";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E0C520D62DF4C8C5009D84A3 /* DJVUReader-iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "DJVUReader-iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0C520E32DF4C8C7009D84A3 /* DJVUReader-iOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DJVUReader-iOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0C520ED2DF4C8C7009D84A3 /* DJVUReader-iOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "DJVUReader-iOSUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E0C520D82DF4C8C5009D84A3 /* DJVUReader-iOS */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "DJVUReader-iOS";
+			sourceTree = "<group>";
+		};
+		E0C520E62DF4C8C7009D84A3 /* DJVUReader-iOSTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "DJVUReader-iOSTests";
+			sourceTree = "<group>";
+		};
+		E0C520F02DF4C8C7009D84A3 /* DJVUReader-iOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "DJVUReader-iOSUITests";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E0C520D32DF4C8C5009D84A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520E02DF4C8C7009D84A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520EA2DF4C8C7009D84A3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E0C520CD2DF4C8C5009D84A3 = {
+			isa = PBXGroup;
+			children = (
+				E0C520D82DF4C8C5009D84A3 /* DJVUReader-iOS */,
+				E0C520E62DF4C8C7009D84A3 /* DJVUReader-iOSTests */,
+				E0C520F02DF4C8C7009D84A3 /* DJVUReader-iOSUITests */,
+				E0C520D72DF4C8C5009D84A3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E0C520D72DF4C8C5009D84A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E0C520D62DF4C8C5009D84A3 /* DJVUReader-iOS.app */,
+				E0C520E32DF4C8C7009D84A3 /* DJVUReader-iOSTests.xctest */,
+				E0C520ED2DF4C8C7009D84A3 /* DJVUReader-iOSUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E0C520D52DF4C8C5009D84A3 /* DJVUReader-iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0C520F72DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOS" */;
+			buildPhases = (
+				E0C520D22DF4C8C5009D84A3 /* Sources */,
+				E0C520D32DF4C8C5009D84A3 /* Frameworks */,
+				E0C520D42DF4C8C5009D84A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E0C520D82DF4C8C5009D84A3 /* DJVUReader-iOS */,
+			);
+			name = "DJVUReader-iOS";
+			packageProductDependencies = (
+			);
+			productName = "DJVUReader-iOS";
+			productReference = E0C520D62DF4C8C5009D84A3 /* DJVUReader-iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E0C520E22DF4C8C7009D84A3 /* DJVUReader-iOSTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0C520FA2DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOSTests" */;
+			buildPhases = (
+				E0C520DF2DF4C8C7009D84A3 /* Sources */,
+				E0C520E02DF4C8C7009D84A3 /* Frameworks */,
+				E0C520E12DF4C8C7009D84A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E0C520E52DF4C8C7009D84A3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E0C520E62DF4C8C7009D84A3 /* DJVUReader-iOSTests */,
+			);
+			name = "DJVUReader-iOSTests";
+			packageProductDependencies = (
+			);
+			productName = "DJVUReader-iOSTests";
+			productReference = E0C520E32DF4C8C7009D84A3 /* DJVUReader-iOSTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E0C520EC2DF4C8C7009D84A3 /* DJVUReader-iOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0C520FD2DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOSUITests" */;
+			buildPhases = (
+				E0C520E92DF4C8C7009D84A3 /* Sources */,
+				E0C520EA2DF4C8C7009D84A3 /* Frameworks */,
+				E0C520EB2DF4C8C7009D84A3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E0C520EF2DF4C8C7009D84A3 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E0C520F02DF4C8C7009D84A3 /* DJVUReader-iOSUITests */,
+			);
+			name = "DJVUReader-iOSUITests";
+			packageProductDependencies = (
+			);
+			productName = "DJVUReader-iOSUITests";
+			productReference = E0C520ED2DF4C8C7009D84A3 /* DJVUReader-iOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E0C520CE2DF4C8C5009D84A3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					E0C520D52DF4C8C5009D84A3 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					E0C520E22DF4C8C7009D84A3 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E0C520D52DF4C8C5009D84A3;
+					};
+					E0C520EC2DF4C8C7009D84A3 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = E0C520D52DF4C8C5009D84A3;
+					};
+				};
+			};
+			buildConfigurationList = E0C520D12DF4C8C5009D84A3 /* Build configuration list for PBXProject "DJVUReader-iOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E0C520CD2DF4C8C5009D84A3;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E0C520D72DF4C8C5009D84A3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E0C520D52DF4C8C5009D84A3 /* DJVUReader-iOS */,
+				E0C520E22DF4C8C7009D84A3 /* DJVUReader-iOSTests */,
+				E0C520EC2DF4C8C7009D84A3 /* DJVUReader-iOSUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E0C520D42DF4C8C5009D84A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520E12DF4C8C7009D84A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520EB2DF4C8C7009D84A3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E0C520D22DF4C8C5009D84A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520DF2DF4C8C7009D84A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E0C520E92DF4C8C7009D84A3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E0C520E52DF4C8C7009D84A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0C520D52DF4C8C5009D84A3 /* DJVUReader-iOS */;
+			targetProxy = E0C520E42DF4C8C7009D84A3 /* PBXContainerItemProxy */;
+		};
+		E0C520EF2DF4C8C7009D84A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E0C520D52DF4C8C5009D84A3 /* DJVUReader-iOS */;
+			targetProxy = E0C520EE2DF4C8C7009D84A3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E0C520F52DF4C8C7009D84A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E0C520F62DF4C8C7009D84A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		E0C520F82DF4C8C7009D84A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DJVUReader-iOS/LibDJVU/include",
+				);
+				INFOPLIST_KEY_CFBundleDisplayName = "DJVU Reader";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DJVUReader-iOS/LibDJVU/lib",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ldjvulibre",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "DJVUReader-iOS/LibDJVU/DJVUReader-iOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		E0C520F92DF4C8C7009D84A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DJVUReader-iOS/LibDJVU/include",
+				);
+				INFOPLIST_KEY_CFBundleDisplayName = "DJVU Reader";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/DJVUReader-iOS/LibDJVU/lib",
+				);
+				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ldjvulibre",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "DJVUReader-iOS/LibDJVU/DJVUReader-iOS-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E0C520FB2DF4C8C7009D84A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DJVUReader-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DJVUReader-iOS";
+			};
+			name = Debug;
+		};
+		E0C520FC2DF4C8C7009D84A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOSTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/DJVUReader-iOS.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/DJVUReader-iOS";
+			};
+			name = Release;
+		};
+		E0C520FE2DF4C8C7009D84A3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "DJVUReader-iOS";
+			};
+			name = Debug;
+		};
+		E0C520FF2DF4C8C7009D84A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = SVLHJT6P6Y;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "bonitalabs.DJVUReader-iOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "DJVUReader-iOS";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E0C520D12DF4C8C5009D84A3 /* Build configuration list for PBXProject "DJVUReader-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0C520F52DF4C8C7009D84A3 /* Debug */,
+				E0C520F62DF4C8C7009D84A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E0C520F72DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0C520F82DF4C8C7009D84A3 /* Debug */,
+				E0C520F92DF4C8C7009D84A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E0C520FA2DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOSTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0C520FB2DF4C8C7009D84A3 /* Debug */,
+				E0C520FC2DF4C8C7009D84A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E0C520FD2DF4C8C7009D84A3 /* Build configuration list for PBXNativeTarget "DJVUReader-iOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E0C520FE2DF4C8C7009D84A3 /* Debug */,
+				E0C520FF2DF4C8C7009D84A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E0C520CE2DF4C8C5009D84A3 /* Project object */;
+}
