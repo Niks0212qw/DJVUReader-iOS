@@ -4,6 +4,9 @@ struct ContinuousPageView: View {
     @ObservedObject var djvuDocument: DJVUDocument
     let pageIndex: Int
     let geometry: GeometryProxy
+    @State private var isVisible = false
+    @State private var loadTask: Task<Void, Never>?
+    @State private var hasBeenVisible = false
     
     var body: some View {
         Group {
@@ -13,8 +16,7 @@ struct ContinuousPageView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: geometry.size.width)
                     .background(Color.white)
-                    .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
-            } else {
+            } else if hasBeenVisible {
                 Rectangle()
                     .fill(Color.secondary.opacity(0.05))
                     .aspectRatio(0.75, contentMode: .fit)
@@ -43,12 +45,28 @@ struct ContinuousPageView: View {
                         }
                     )
                     .background(Color.white)
-                    .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
+            } else {
+                Rectangle()
+                    .fill(Color.clear)
+                    .aspectRatio(0.75, contentMode: .fit)
+                    .frame(maxWidth: geometry.size.width)
             }
         }
-        .padding(.vertical, 4)
         .onAppear {
-            let _ = djvuDocument.getImageForPage(pageIndex)
+            isVisible = true
+            hasBeenVisible = true
+            loadTask?.cancel()
+            loadTask = Task {
+                try? await Task.sleep(nanoseconds: 200_000_000)
+                if isVisible && !Task.isCancelled {
+                    let _ = djvuDocument.getImageForPage(pageIndex)
+                }
+            }
+        }
+        .onDisappear {
+            isVisible = false
+            loadTask?.cancel()
+            loadTask = nil
         }
     }
 }

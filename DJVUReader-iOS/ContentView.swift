@@ -154,6 +154,8 @@ struct DocumentView: View {
     @State private var panOffset: CGSize = .zero
     @State private var lastPanOffset: CGSize = .zero
     @State private var currentPageIndex: Int = 0
+    @State private var scrollOffset: CGPoint = .zero
+    @State private var isUserScrolling = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -169,7 +171,7 @@ struct DocumentView: View {
                     }
                 } else if djvuDocument.viewMode == .continuous {
                     ScrollViewReader { proxy in
-                        ScrollView(.vertical, showsIndicators: false) {
+                        ScrollView(.vertical, showsIndicators: true) {
                             LazyVStack(spacing: 0) {
                                 ForEach(0..<djvuDocument.totalPages, id: \.self) { pageIndex in
                                     ContinuousPageView(
@@ -178,26 +180,30 @@ struct DocumentView: View {
                                         geometry: geometry
                                     )
                                     .id("page-\(pageIndex)")
-                                    .scaleEffect(zoomLevel)
-                                    .onTapGesture(count: 2) {
-                                        withAnimation(.spring()) {
-                                            if zoomLevel <= 1.0 {
-                                                zoomLevel = 2.0
-                                            } else {
-                                                zoomLevel = 1.0
-                                            }
-                                        }
-                                    }
                                     .onAppear {
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                            if djvuDocument.currentPage != pageIndex {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            if djvuDocument.currentPage != pageIndex && djvuDocument.viewMode == .continuous && !isUserScrolling {
+                                                isUserScrolling = true
                                                 djvuDocument.currentPage = pageIndex
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                    isUserScrolling = false
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                            .scaleEffect(zoomLevel)
                             .padding(.vertical, 20)
+                        }
+                        .onTapGesture(count: 2) {
+                            withAnimation(.spring()) {
+                                if zoomLevel <= 1.0 {
+                                    zoomLevel = 2.0
+                                } else {
+                                    zoomLevel = 1.0
+                                }
+                            }
                         }
                         .gesture(
                             MagnificationGesture()
@@ -212,7 +218,7 @@ struct DocumentView: View {
                             }
                         }
                         .onChange(of: djvuDocument.currentPage) { oldValue, newValue in
-                            if oldValue != newValue && djvuDocument.viewMode == .continuous {
+                            if oldValue != newValue && djvuDocument.viewMode == .continuous && !isUserScrolling {
                                 withAnimation(.easeInOut) {
                                     proxy.scrollTo("page-\(newValue)", anchor: .top)
                                 }
@@ -328,7 +334,7 @@ struct DocumentView: View {
             }
         }
         .onChange(of: djvuDocument.currentPage) { oldValue, newValue in
-            if oldValue != newValue {
+            if oldValue != newValue && djvuDocument.viewMode == .singlePage {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     zoomLevel = 1.0
                     panOffset = .zero
