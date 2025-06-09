@@ -10,7 +10,6 @@
 #include <string>
 #include <Foundation/Foundation.h>
 
-// Real djvulibre implementation for iOS
 struct djvu_context_t {
     ddjvu_context_t* ddjvu_context = nullptr;
     ddjvu_document_t* document = nullptr;
@@ -68,7 +67,6 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
     NSLog(@"📁 Processing file: %@", nsFilePath);
     NSLog(@"📁 File extension: %@", fileExtension);
     
-    // Check if it's a PDF file first
     if ([fileExtension isEqualToString:@"pdf"]) {
         NSLog(@"📄 PDF file detected, marking as PDF");
         ctx->is_pdf = true;
@@ -76,13 +74,11 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
         return 0;
     }
     
-    // Check if file exists and is accessible
     if (![[NSFileManager defaultManager] fileExistsAtPath:nsFilePath]) {
         NSLog(@"❌ DJVU file does not exist: %@", nsFilePath);
         return -1;
     }
     
-    // Try to read file data to ensure we have access
     NSData *fileData = [NSData dataWithContentsOfFile:nsFilePath];
     if (!fileData || fileData.length < 16) {
         NSLog(@"❌ Cannot read DJVU file or file too small: %@ (size: %lu)", nsFilePath, (unsigned long)fileData.length);
@@ -91,15 +87,12 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
     
     NSLog(@"📖 Loading DJVU file: %@ (size: %lu bytes)", nsFilePath, (unsigned long)fileData.length);
     
-    // For files with non-ASCII characters, we need to ensure proper encoding
-    // Convert the NSString path back to UTF-8 C string to ensure proper encoding
     const char* utf8_path = [nsFilePath UTF8String];
     if (!utf8_path) {
         NSLog(@"❌ Failed to get UTF8 representation of path");
         return -1;
     }
     
-    // Create document from file data instead of filename for better Unicode support
     ctx->document = ddjvu_document_create_by_filename(ctx->ddjvu_context, utf8_path, FALSE);
     if (!ctx->document) {
         NSLog(@"❌ Failed to create djvu document for path: %@", nsFilePath);
@@ -108,15 +101,14 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
     
     NSLog(@"✅ DJVU document object created, waiting for info...");
     
-    // Wait for document to be ready with timeout
     ddjvu_message_t *message;
     int timeout_count = 0;
-    const int max_timeout = 50; // ~5 seconds timeout
+    const int max_timeout = 50;
     
     while (timeout_count < max_timeout) {
         message = ddjvu_message_peek(ctx->ddjvu_context);
         if (!message) {
-            usleep(100000); // Wait 100ms
+            usleep(100000);
             timeout_count++;
             continue;
         }
@@ -141,7 +133,6 @@ int32_t djvu_load_document_from_file(djvu_context_t* ctx, const char* file_path)
         return -1;
     }
     
-    // Get page count
     ctx->page_count = ddjvu_document_get_pagenum(ctx->document);
     if (ctx->page_count <= 0) {
         NSLog(@"❌ Invalid page count: %d", ctx->page_count);
@@ -167,7 +158,6 @@ int32_t djvu_get_page_dimensions(djvu_context_t* ctx, int32_t page_index,
     }
     
     if (ctx->is_pdf) {
-        // For PDF files, return standard dimensions (will be handled by PDFKit)
         *width = 612;
         *height = 792;
         return 0;
@@ -177,7 +167,6 @@ int32_t djvu_get_page_dimensions(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
-    // Get page info using djvulibre
     ddjvu_pageinfo_t info;
     ddjvu_status_t status = ddjvu_document_get_pageinfo(ctx->document, page_index, &info);
     
@@ -186,7 +175,6 @@ int32_t djvu_get_page_dimensions(djvu_context_t* ctx, int32_t page_index,
         *height = info.height;
         return 0;
     } else {
-        // Fallback to default dimensions
         *width = 612;
         *height = 792;
         return 0;
@@ -202,9 +190,8 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
     }
     
     if (ctx->is_pdf) {
-        // PDF files will be handled by PDFKit in Swift layer
         NSLog(@"📄 PDF rendering delegated to PDFKit");
-        return -2; // Special code to indicate PDF should use PDFKit
+        return -2;
     }
     
     if (!ctx->document) {
@@ -214,22 +201,20 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
     
     NSLog(@"🎨 Rendering DJVU page %d at %dx%d", page_index + 1, width, height);
     
-    // Create page object
     ddjvu_page_t* page = ddjvu_page_create_by_pageno(ctx->document, page_index);
     if (!page) {
         NSLog(@"❌ Failed to create page object");
         return -1;
     }
     
-    // Wait for page to be ready with timeout
     ddjvu_message_t *message;
     int page_timeout_count = 0;
-    const int max_page_timeout = 100; // ~10 seconds timeout
+    const int max_page_timeout = 100;
     
     while (page_timeout_count < max_page_timeout) {
         message = ddjvu_message_peek(ctx->ddjvu_context);
         if (!message) {
-            usleep(100000); // Wait 100ms
+            usleep(100000);
             page_timeout_count++;
             continue;
         }
@@ -256,11 +241,9 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
-    // Set up rendering parameters
     ddjvu_rect_t prect = {0, 0, (unsigned int)width, (unsigned int)height};
     ddjvu_rect_t rrect = {0, 0, (unsigned int)width, (unsigned int)height};
     
-    // Create format for RGB rendering
     ddjvu_format_t* format = ddjvu_format_create(DDJVU_FORMAT_RGB24, 0, nullptr);
     if (!format) {
         NSLog(@"❌ Failed to create format");
@@ -268,10 +251,9 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
-    ddjvu_format_set_row_order(format, 1); // Top to bottom
-    ddjvu_format_set_y_direction(format, 1); // Normal Y direction
+    ddjvu_format_set_row_order(format, 1);
+    ddjvu_format_set_y_direction(format, 1);
     
-    // Allocate temporary RGB buffer (3 bytes per pixel)
     int rgb_size = width * height * 3;
     unsigned char* rgb_buffer = (unsigned char*)malloc(rgb_size);
     if (!rgb_buffer) {
@@ -281,17 +263,15 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
-    // Render the page to RGB buffer
     int result = ddjvu_page_render(page, DDJVU_RENDER_COLOR, &prect, &rrect, format, 
                                    width * 3, (char*)rgb_buffer);
     
     if (result) {
-        // Convert RGB to RGBA
         for (int i = 0; i < width * height; i++) {
-            pixel_buffer[i * 4 + 0] = rgb_buffer[i * 3 + 0]; // R
-            pixel_buffer[i * 4 + 1] = rgb_buffer[i * 3 + 1]; // G
-            pixel_buffer[i * 4 + 2] = rgb_buffer[i * 3 + 2]; // B
-            pixel_buffer[i * 4 + 3] = 255;                    // A (fully opaque)
+            pixel_buffer[i * 4 + 0] = rgb_buffer[i * 3 + 0];
+            pixel_buffer[i * 4 + 1] = rgb_buffer[i * 3 + 1];
+            pixel_buffer[i * 4 + 2] = rgb_buffer[i * 3 + 2];
+            pixel_buffer[i * 4 + 3] = 255;
         }
     }
     

@@ -1,10 +1,3 @@
-//
-//  DJVUReader_iOSApp.swift
-//  DJVUReader-iOS
-//
-//  Created by Никита Кривоносов on 07.06.2025.
-//
-
 import SwiftUI
 
 @main

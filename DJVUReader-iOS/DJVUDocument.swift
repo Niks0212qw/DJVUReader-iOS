@@ -1,10 +1,3 @@
-//
-//  DJVUDocument.swift
-//  DJVUReader-iOS
-//
-//  Created by Никита Кривоносов on 07.06.2025.
-//
-
 import Foundation
 import UIKit
 import PDFKit
@@ -218,7 +211,6 @@ class DJVUDocument: ObservableObject {
             page.draw(with: .mediaBox, to: context.cgContext)
         }
         
-        // Кэшируем изображение
         imageCache[pageIndex] = image
         
         DispatchQueue.main.async {
@@ -234,7 +226,6 @@ class DJVUDocument: ObservableObject {
     private func loadDJVUPageImage(pageIndex: Int) {
         guard let context = djvuContext else { return }
         
-        // Получаем размеры страницы
         var width: Int32 = 0
         var height: Int32 = 0
         
@@ -247,12 +238,10 @@ class DJVUDocument: ObservableObject {
             return
         }
         
-        // Рендерим страницу
         let scale: Float = 2.0 // Масштаб для качества
         let scaledWidth = Int32(Float(width) * scale)
         let scaledHeight = Int32(Float(height) * scale)
         
-        // Выделяем память для пикселей (RGBA)
         let bytesPerPixel = 4
         let dataSize = Int(scaledWidth * scaledHeight * Int32(bytesPerPixel))
         let pixelData = UnsafeMutablePointer<UInt8>.allocate(capacity: dataSize)
@@ -284,7 +273,6 @@ class DJVUDocument: ObservableObject {
             return
         }
         
-        // Создаем UIImage из пиксельных данных
         guard let image = createUIImage(
             from: pixelData,
             width: Int(scaledWidth),
@@ -297,7 +285,6 @@ class DJVUDocument: ObservableObject {
             return
         }
         
-        // Кэшируем изображение
         imageCache[pageIndex] = image
         
         DispatchQueue.main.async {
@@ -615,7 +602,6 @@ class DJVUDocument: ObservableObject {
             page.draw(with: .mediaBox, to: context.cgContext)
         }
         
-        // Кэшируем изображение
         imageCache[pageIndex] = image
         return image
     }
@@ -623,7 +609,6 @@ class DJVUDocument: ObservableObject {
     private func loadDJVUPageImageSync(pageIndex: Int) -> UIImage? {
         guard let context = djvuContext else { return nil }
         
-        // Получаем размеры страницы
         var width: Int32 = 0
         var height: Int32 = 0
         
@@ -632,12 +617,10 @@ class DJVUDocument: ObservableObject {
             return nil
         }
         
-        // Рендерим страницу
         let scale: Float = 2.0
         let scaledWidth = Int32(Float(width) * scale)
         let scaledHeight = Int32(Float(height) * scale)
         
-        // Выделяем память для пикселей (RGBA)
         let bytesPerPixel = 4
         let dataSize = Int(scaledWidth * scaledHeight * Int32(bytesPerPixel))
         let pixelData = UnsafeMutablePointer<UInt8>.allocate(capacity: dataSize)
@@ -661,7 +644,6 @@ class DJVUDocument: ObservableObject {
             return nil
         }
         
-        // Создаем UIImage из пиксельных данных
         guard let image = createUIImage(
             from: pixelData,
             width: Int(scaledWidth),
@@ -670,7 +652,6 @@ class DJVUDocument: ObservableObject {
             return nil
         }
         
-        // Кэшируем изображение
         imageCache[pageIndex] = image
         return image
     }

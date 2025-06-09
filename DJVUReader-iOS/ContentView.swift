@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  DJVUReader-iOS
-//
-//  Created by Никита Кривоносов on 07.06.2025.
-//
-
 import SwiftUI
 
 struct ContentView: View {
@@ -22,12 +15,9 @@ struct ContentView: View {
                     isScrollMode: isScrollMode
                 )
                 
-                // Плавающие кнопки управления
                 VStack {
                     HStack {
-                        // Кнопки управления файлами и режимами
                         HStack(spacing: 12) {
-                            // Кнопка открытия файла
                             Button(action: {
                                 showingDocumentPicker = true
                             }) {
@@ -39,7 +29,6 @@ struct ContentView: View {
                                     .clipShape(Circle())
                             }
                             
-                            // Кнопка переключения режима просмотра
                             Button(action: {
                                 withAnimation(.spring()) {
                                     let newMode: ViewMode = djvuDocument.viewMode == .singlePage ? .continuous : .singlePage
@@ -58,7 +47,6 @@ struct ContentView: View {
                         
                         Spacer()
                         
-                        // Кнопки масштабирования
                         HStack(spacing: 8) {
                             Button(action: {
                                 withAnimation(.spring()) {
@@ -102,7 +90,6 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    // Кнопки навигации по страницам (только в одностраничном режиме)
                     if djvuDocument.viewMode == .singlePage {
                         HStack(spacing: 20) {
                             Button(action: {
@@ -177,7 +164,6 @@ struct DocumentView: View {
                             .font(.caption)
                     }
                 } else if djvuDocument.viewMode == .continuous {
-                    // Режим непрерывной прокрутки с мгновенным переключением и постраничной загрузкой
                     ScrollViewReader { proxy in
                         ScrollView(.vertical, showsIndicators: false) {
                             LazyVStack(spacing: 0) {
@@ -199,7 +185,6 @@ struct DocumentView: View {
                                         }
                                     }
                                     .onAppear {
-                                        // Обновляем текущую страницу при скроллинге
                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                             if djvuDocument.currentPage != pageIndex {
                                                 djvuDocument.currentPage = pageIndex
@@ -218,13 +203,11 @@ struct DocumentView: View {
                                 }
                         )
                         .onAppear {
-                            // Прокрутка к текущей странице при появлении
                             if djvuDocument.currentPage < djvuDocument.totalPages {
                                 proxy.scrollTo("page-\(djvuDocument.currentPage)", anchor: .top)
                             }
                         }
                         .onChange(of: djvuDocument.currentPage) { oldValue, newValue in
-                            // Синхронизация с навигацией
                             if oldValue != newValue && djvuDocument.viewMode == .continuous {
                                 withAnimation(.easeInOut) {
                                     proxy.scrollTo("page-\(newValue)", anchor: .top)
@@ -232,8 +215,6 @@ struct DocumentView: View {
                             }
                         }
                     }
-                    
-                    // Показываем прогресс загрузки внизу экрана
                     if djvuDocument.isContinuousLoading {
                         VStack {
                             Spacer()
@@ -255,7 +236,6 @@ struct DocumentView: View {
                         }
                     }
                 } else if let image = djvuDocument.currentImage {
-                    // Одностраничный режим
                     ScrollView([.horizontal, .vertical], showsIndicators: false) {
                         Image(uiImage: image)
                             .resizable()
@@ -323,14 +303,12 @@ struct DocumentView: View {
                                 let newZoomLevel = max(0.5, min(3.0, value))
                                 zoomLevel = newZoomLevel
                                 
-                                // Сбрасываем панорамирование при уменьшении масштаба до базового или меньше
                                 if newZoomLevel <= 1.0 {
                                     panOffset = .zero
                                     lastPanOffset = .zero
                                 }
                             }
                             .onEnded { _ in
-                                // Дополнительный сброс при завершении жеста
                                 if zoomLevel <= 1.0 {
                                     withAnimation(.spring()) {
                                         panOffset = .zero
@@ -346,7 +324,6 @@ struct DocumentView: View {
             }
         }
         .onChange(of: djvuDocument.currentPage) { oldValue, newValue in
-            // Сбрасываем масштаб и позицию при смене страницы
             if oldValue != newValue {
                 withAnimation(.easeInOut(duration: 0.3)) {
                     zoomLevel = 1.0
@@ -358,7 +335,6 @@ struct DocumentView: View {
             }
         }
         .onChange(of: djvuDocument.viewMode) { oldValue, newValue in
-            // Сбрасываем масштаб при переключении режимов
             withAnimation(.easeInOut(duration: 0.3)) {
                 zoomLevel = 1.0
                 panOffset = .zero

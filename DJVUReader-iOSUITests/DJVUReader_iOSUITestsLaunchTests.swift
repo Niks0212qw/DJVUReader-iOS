@@ -1,10 +1,3 @@
-//
-//  DJVUReader_iOSUITestsLaunchTests.swift
-//  DJVUReader-iOSUITests
-//
-//  Created by Никита Кривоносов on 07.06.2025.
-//
-
 import XCTest
 
 final class DJVUReader_iOSUITestsLaunchTests: XCTestCase {

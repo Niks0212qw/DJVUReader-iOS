@@ -1,10 +1,3 @@
-//
-//  ContinuousPageView.swift
-//  DJVUReader-iOS
-//
-//  Created by Никита Кривоносов on 08.06.2025.
-//
-
 import SwiftUI
 
 struct ContinuousPageView: View {
@@ -22,7 +15,6 @@ struct ContinuousPageView: View {
                     .background(Color.white)
                     .shadow(color: .black.opacity(0.1), radius: 1, x: 0, y: 1)
             } else {
-                // Placeholder для загружающейся страницы в стиле Preview
                 Rectangle()
                     .fill(Color.secondary.opacity(0.05))
                     .aspectRatio(0.75, contentMode: .fit)
@@ -56,7 +48,6 @@ struct ContinuousPageView: View {
         }
         .padding(.vertical, 4)
         .onAppear {
-            // Запрашиваем загрузку страницы, если она еще не загружена
             let _ = djvuDocument.getImageForPage(pageIndex)
         }
     }

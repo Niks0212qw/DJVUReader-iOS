@@ -1,10 +1,3 @@
-//
-//  DJVUReader_iOSTests.swift
-//  DJVUReader-iOSTests
-//
-//  Created by Никита Кривоносов on 07.06.2025.
-//
-
 import XCTest
 @testable import DJVUReader_iOS
 
