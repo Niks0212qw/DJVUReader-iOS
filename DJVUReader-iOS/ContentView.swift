@@ -5,6 +5,8 @@ struct ContentView: View {
     @State private var showingDocumentPicker = false
     @State private var zoomLevel: Double = 1.0
     @State private var isScrollMode: Bool = false
+    @State private var showingPageInput = false
+    @State private var pageInputText = ""
     
     var body: some View {
         ZStack {
@@ -106,13 +108,18 @@ struct ContentView: View {
                             }
                             .disabled(djvuDocument.currentPage <= 0)
                             
-                            Text("\(djvuDocument.currentPage + 1) / \(djvuDocument.totalPages)")
-                                .font(.caption)
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(Color.black.opacity(0.7))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                            Button(action: {
+                                pageInputText = "\(djvuDocument.currentPage + 1)"
+                                showingPageInput = true
+                            }) {
+                                Text("\(djvuDocument.currentPage + 1) / \(djvuDocument.totalPages)")
+                                    .font(.caption)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 6)
+                                    .background(Color.black.opacity(0.7))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
                             
                             Button(action: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
@@ -142,6 +149,27 @@ struct ContentView: View {
         .ignoresSafeArea()
         .sheet(isPresented: $showingDocumentPicker) {
             DocumentPicker(djvuDocument: djvuDocument)
+        }
+        .alert("Перейти к странице", isPresented: $showingPageInput) {
+            TextField("Номер страницы", text: $pageInputText)
+                .keyboardType(.numberPad)
+            
+            Button("Перейти") {
+                if let pageNumber = Int(pageInputText), 
+                   pageNumber >= 1, 
+                   pageNumber <= djvuDocument.totalPages {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        djvuDocument.currentPage = pageNumber - 1
+                    }
+                }
+                showingPageInput = false
+            }
+            
+            Button("Отмена", role: .cancel) {
+                showingPageInput = false
+            }
+        } message: {
+            Text("Введите номер страницы от 1 до \(djvuDocument.totalPages)")
         }
     }
 }
