@@ -93,7 +93,9 @@ struct ContentView: View {
                     if djvuDocument.viewMode == .singlePage {
                         HStack(spacing: 20) {
                             Button(action: {
-                                djvuDocument.previousPage()
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    djvuDocument.previousPage()
+                                }
                             }) {
                                 Image(systemName: "chevron.left")
                                     .font(.title2)
@@ -113,7 +115,9 @@ struct ContentView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 12))
                             
                             Button(action: {
-                                djvuDocument.nextPage()
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    djvuDocument.nextPage()
+                                }
                             }) {
                                 Image(systemName: "chevron.right")
                                     .font(.title2)

@@ -24,6 +24,11 @@ class DJVUDocument: ObservableObject {
     @Published var continuousLoadingQueue = Set<Int>()
     private let batchSize = 3
     
+    // Memory management
+    private let maxCacheSize = 10 // Maximum pages to keep in cache
+    private let maxMemoryMB = 150 // Maximum memory usage in MB
+    private var cacheAccessOrder: [Int] = [] // LRU tracking
+    
     private var documentURL: URL?
     private var imageCache: [Int: UIImage] = [:]
     private var djvuContext: OpaquePointer?
@@ -34,6 +39,81 @@ class DJVUDocument: ObservableObject {
     private let progressiveQueue = DispatchQueue(label: "djvu.progressive", qos: .userInitiated)
     private var tempFileURL: URL?
     private var progressiveLoadingTask: DispatchWorkItem?
+    
+    // Memory monitoring
+    private var memoryPressureSource: DispatchSourceMemoryPressure?
+    
+    // MARK: - Memory Management
+    
+    private func setupMemoryPressureMonitoring() {
+        memoryPressureSource = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
+        memoryPressureSource?.setEventHandler { [weak self] in
+            guard let self = self else { return }
+            let event = self.memoryPressureSource?.mask
+            
+            if event?.contains(.warning) == true {
+                print("⚠️ Memory pressure warning - clearing half of cache")
+                self.clearMemoryCache(aggressive: false)
+            } else if event?.contains(.critical) == true {
+                print("🚨 Memory pressure critical - aggressive cache cleanup")
+                self.clearMemoryCache(aggressive: true)
+            }
+        }
+        memoryPressureSource?.resume()
+    }
+    
+    private func clearMemoryCache(aggressive: Bool) {
+        let targetSize = aggressive ? 2 : maxCacheSize / 2
+        
+        // Keep only most recently accessed pages
+        while imageCache.count > targetSize && !cacheAccessOrder.isEmpty {
+            let oldestPage = cacheAccessOrder.removeFirst()
+            imageCache.removeValue(forKey: oldestPage)
+            print("🗑️ Removed page \(oldestPage + 1) from cache")
+        }
+        
+        // Clear continuous images if aggressive
+        if aggressive {
+            continuousImages.removeAll()
+            print("🗑️ Cleared continuous images cache")
+        }
+        
+        // Force garbage collection
+        DispatchQueue.global(qos: .background).async {
+            autoreleasepool {
+                // Empty autoreleasepool to encourage cleanup
+            }
+        }
+    }
+    
+    private func updateCacheAccess(pageIndex: Int) {
+        // Remove if already exists
+        cacheAccessOrder.removeAll { $0 == pageIndex }
+        // Add to end (most recent)
+        cacheAccessOrder.append(pageIndex)
+        
+        // Limit cache size
+        while imageCache.count > maxCacheSize && !cacheAccessOrder.isEmpty {
+            let oldestPage = cacheAccessOrder.removeFirst()
+            if oldestPage != pageIndex { // Don't remove the page we just accessed
+                imageCache.removeValue(forKey: oldestPage)
+                print("💾 LRU: Removed page \(oldestPage + 1) from cache")
+            }
+        }
+    }
+    
+    private func estimateMemoryUsage() -> Double {
+        var totalBytes: Double = 0
+        for (_, image) in imageCache {
+            let bytes = image.size.width * image.size.height * image.scale * image.scale * 4 // RGBA
+            totalBytes += bytes
+        }
+        for (_, image) in continuousImages {
+            let bytes = image.size.width * image.size.height * image.scale * image.scale * 4
+            totalBytes += bytes
+        }
+        return totalBytes / (1024 * 1024) // Convert to MB
+    }
     
     private func copyToTempDirectory(from sourceURL: URL) -> URL? {
         let tempDir = FileManager.default.temporaryDirectory
@@ -65,6 +145,14 @@ class DJVUDocument: ObservableObject {
     func loadDocument(from url: URL) {
         documentURL = url
         errorMessage = ""
+        
+        // Clear previous caches
+        imageCache.removeAll()
+        continuousImages.removeAll() 
+        cacheAccessOrder.removeAll()
+        
+        // Setup memory monitoring
+        setupMemoryPressureMonitoring()
         
         DispatchQueue.main.async {
             self.isLoading = true
@@ -161,20 +249,29 @@ class DJVUDocument: ObservableObject {
     func loadPage(_ pageIndex: Int) {
         guard pageIndex >= 0 && pageIndex < totalPages else { return }
         
+        print("🔄 Loading page \(pageIndex + 1)")
+        
+        // First update current page and loading state
+        DispatchQueue.main.async {
+            self.currentPage = pageIndex
+            self.isLoading = true
+        }
+        
+        // Check cache first
         if let cachedImage = imageCache[pageIndex] {
+            updateCacheAccess(pageIndex: pageIndex) // Update LRU
             DispatchQueue.main.async {
                 self.currentImage = cachedImage
-                self.currentPage = pageIndex
                 self.isLoading = false
+                self.errorMessage = ""
+                print("📋 Page \(pageIndex + 1) loaded from cache")
+                // Force UI update
+                self.objectWillChange.send()
             }
             return
         }
         
-        DispatchQueue.main.async {
-            self.isLoading = true
-            self.currentPage = pageIndex
-        }
-        
+        // Load in background
         backgroundQueue.async {
             self.loadPageImage(pageIndex: pageIndex)
         }
@@ -199,7 +296,10 @@ class DJVUDocument: ObservableObject {
         }
         
         let pageRect = page.bounds(for: .mediaBox)
-        let scale: CGFloat = 2.0 // Масштаб для качества
+        // Adaptive scaling based on available memory and page size
+        let baseArea = pageRect.width * pageRect.height
+        let maxArea: CGFloat = 2000000 // 2M pixels max for PDFs
+        let scale: CGFloat = baseArea > maxArea ? sqrt(maxArea / baseArea) : min(2.0, UIScreen.main.scale)
         let scaledSize = CGSize(width: pageRect.width * scale, height: pageRect.height * scale)
         
         let renderer = UIGraphicsImageRenderer(size: scaledSize)
@@ -212,87 +312,50 @@ class DJVUDocument: ObservableObject {
         }
         
         imageCache[pageIndex] = image
+        updateCacheAccess(pageIndex: pageIndex)
+        
+        let memoryUsage = estimateMemoryUsage()
+        print("💾 Memory usage: \(String(format: "%.1f", memoryUsage))MB")
         
         DispatchQueue.main.async {
+            // Always update current image if this is the requested page
             if self.currentPage == pageIndex {
                 self.currentImage = image
                 self.isLoading = false
                 self.errorMessage = ""
-                print("✅ PDF страница \(pageIndex + 1) загружена")
+                print("✅ PDF страница \(pageIndex + 1) загружена и отображена")
+                // Force UI update
+                self.objectWillChange.send()
+            } else {
+                print("✅ PDF страница \(pageIndex + 1) загружена в кэш")
             }
         }
     }
     
     private func loadDJVUPageImage(pageIndex: Int) {
-        guard let context = djvuContext else { return }
-        
-        var width: Int32 = 0
-        var height: Int32 = 0
-        
-        let sizeResult = djvu_get_page_dimensions(context, Int32(pageIndex), &width, &height)
-        if sizeResult != 0 {
+        guard let image = loadDJVUPageImageSync(pageIndex: pageIndex) else {
             DispatchQueue.main.async {
-                self.errorMessage = "Не удалось получить размер страницы"
+                self.errorMessage = "Не удалось загрузить DJVU страницу \(pageIndex + 1)"
                 self.isLoading = false
+                // Set failed page image if this is the current page
+                if self.currentPage == pageIndex {
+                    self.currentImage = self.createFailedPageImage(pageIndex: pageIndex, reason: "Ошибка загрузки")
+                }
             }
             return
         }
-        
-        let scale: Float = 2.0 // Масштаб для качества
-        let scaledWidth = Int32(Float(width) * scale)
-        let scaledHeight = Int32(Float(height) * scale)
-        
-        let bytesPerPixel = 4
-        let dataSize = Int(scaledWidth * scaledHeight * Int32(bytesPerPixel))
-        let pixelData = UnsafeMutablePointer<UInt8>.allocate(capacity: dataSize)
-        
-        defer {
-            pixelData.deallocate()
-        }
-        
-        let renderResult = djvu_render_page_to_buffer(
-            context,
-            Int32(pageIndex),
-            scaledWidth,
-            scaledHeight,
-            pixelData
-        )
-        
-        if renderResult == -2 {
-            // PDF file - should be handled by PDFKit, this shouldn't happen
-            DispatchQueue.main.async {
-                self.errorMessage = "PDF файлы должны обрабатываться PDFKit"
-                self.isLoading = false
-            }
-            return
-        } else if renderResult != 0 {
-            DispatchQueue.main.async {
-                self.errorMessage = "Не удалось отрендерить DJVU страницу"
-                self.isLoading = false
-            }
-            return
-        }
-        
-        guard let image = createUIImage(
-            from: pixelData,
-            width: Int(scaledWidth),
-            height: Int(scaledHeight)
-        ) else {
-            DispatchQueue.main.async {
-                self.errorMessage = "Не удалось создать изображение"
-                self.isLoading = false
-            }
-            return
-        }
-        
-        imageCache[pageIndex] = image
         
         DispatchQueue.main.async {
+            // Always update current image if this is the requested page
             if self.currentPage == pageIndex {
                 self.currentImage = image
                 self.isLoading = false
                 self.errorMessage = ""
-                print("✅ DJVU страница \(pageIndex + 1) загружена с djvulibre")
+                print("✅ DJVU страница \(pageIndex + 1) загружена и отображена")
+                // Force UI update
+                self.objectWillChange.send()
+            } else {
+                print("✅ DJVU страница \(pageIndex + 1) загружена в кэш")
             }
         }
     }
@@ -325,20 +388,31 @@ class DJVUDocument: ObservableObject {
     
     // MARK: - Navigation
     func nextPage() {
-        if currentPage < totalPages - 1 {
-            loadPage(currentPage + 1)
+        let nextPageIndex = currentPage + 1
+        if nextPageIndex < totalPages {
+            print("➡️ Next page: \(nextPageIndex + 1)")
+            loadPage(nextPageIndex)
+        } else {
+            print("⚠️ Already at last page: \(currentPage + 1)")
         }
     }
     
     func previousPage() {
-        if currentPage > 0 {
-            loadPage(currentPage - 1)
+        let prevPageIndex = currentPage - 1
+        if prevPageIndex >= 0 {
+            print("⬅️ Previous page: \(prevPageIndex + 1)")
+            loadPage(prevPageIndex)
+        } else {
+            print("⚠️ Already at first page: \(currentPage + 1)")
         }
     }
     
     func goToPage(_ page: Int) {
-        if page >= 0 && page < totalPages {
+        if page >= 0 && page < totalPages && page != currentPage {
+            print("🎯 Go to page: \(page + 1)")
             loadPage(page)
+        } else if page == currentPage {
+            print("📋 Already on page: \(page + 1)")
         }
     }
     
@@ -607,22 +681,45 @@ class DJVUDocument: ObservableObject {
     }
     
     private func loadDJVUPageImageSync(pageIndex: Int) -> UIImage? {
-        guard let context = djvuContext else { return nil }
+        guard let context = djvuContext else { 
+            print("❌ No DJVU context for page \(pageIndex + 1)")
+            return nil 
+        }
         
         var width: Int32 = 0
         var height: Int32 = 0
         
         let sizeResult = djvu_get_page_dimensions(context, Int32(pageIndex), &width, &height)
         if sizeResult != 0 {
+            print("❌ Failed to get dimensions for page \(pageIndex + 1)")
             return nil
         }
         
-        let scale: Float = 2.0
+        if width <= 0 || height <= 0 {
+            print("❌ Invalid dimensions for page \(pageIndex + 1): \(width)x\(height)")
+            return nil
+        }
+        
+        let baseArea = Float(width * height)
+        let maxArea: Float = 2000000 // Reduced from 4M to 2M pixels to save memory
+        let scale: Float = baseArea > maxArea ? sqrt(maxArea / baseArea) : min(2.0, Float(UIScreen.main.scale))
+        
         let scaledWidth = Int32(Float(width) * scale)
         let scaledHeight = Int32(Float(height) * scale)
         
+        if scaledWidth > 5000 || scaledHeight > 5000 {
+            print("⚠️ Page \(pageIndex + 1) too large: \(scaledWidth)x\(scaledHeight)")
+            return createFailedPageImage(pageIndex: pageIndex, reason: "Страница слишком большая")
+        }
+        
         let bytesPerPixel = 4
         let dataSize = Int(scaledWidth * scaledHeight * Int32(bytesPerPixel))
+        
+        guard dataSize > 0 && dataSize < 50_000_000 else { // Reduced from 100MB to 50MB
+            print("❌ Page \(pageIndex + 1) requires too much memory: \(dataSize) bytes")
+            return createFailedPageImage(pageIndex: pageIndex, reason: "Недостаточно памяти")
+        }
+        
         let pixelData = UnsafeMutablePointer<UInt8>.allocate(capacity: dataSize)
         
         defer {
@@ -638,10 +735,11 @@ class DJVUDocument: ObservableObject {
         )
         
         if renderResult == -2 {
-            // PDF file - should be handled by PDFKit
+            print("❌ Page \(pageIndex + 1) is PDF, should use PDFKit")
             return nil
         } else if renderResult != 0 {
-            return nil
+            print("❌ Failed to render page \(pageIndex + 1), error code: \(renderResult)")
+            return createFailedPageImage(pageIndex: pageIndex, reason: "Ошибка рендеринга")
         }
         
         guard let image = createUIImage(
@@ -649,10 +747,27 @@ class DJVUDocument: ObservableObject {
             width: Int(scaledWidth),
             height: Int(scaledHeight)
         ) else {
-            return nil
+            print("❌ Failed to create UIImage for page \(pageIndex + 1)")
+            return createFailedPageImage(pageIndex: pageIndex, reason: "Ошибка создания изображения")
         }
         
+        print("✅ Successfully rendered page \(pageIndex + 1) at \(scaledWidth)x\(scaledHeight) (scale: \(scale))")
         imageCache[pageIndex] = image
+        updateCacheAccess(pageIndex: pageIndex)
+        
+        // Additional validation and memory monitoring
+        print("🖼️ Image created: \(image.size.width)x\(image.size.height), scale: \(image.scale)")
+        let memoryUsage = estimateMemoryUsage()
+        print("💾 Memory usage: \(String(format: "%.1f", memoryUsage))MB")
+        
+        // Proactive memory management
+        if memoryUsage > Double(maxMemoryMB) {
+            print("⚠️ Memory usage exceeded \(maxMemoryMB)MB, clearing cache")
+            DispatchQueue.main.async {
+                self.clearMemoryCache(aggressive: false)
+            }
+        }
+        
         return image
     }
     
@@ -686,9 +801,49 @@ class DJVUDocument: ObservableObject {
         }
     }
     
+    private func createFailedPageImage(pageIndex: Int, reason: String) -> UIImage {
+        let size = CGSize(width: 400, height: 600)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        return renderer.image { context in
+            UIColor.white.set()
+            context.fill(CGRect(origin: .zero, size: size))
+            
+            UIColor.red.withAlphaComponent(0.1).set()
+            context.fill(CGRect(origin: .zero, size: size))
+            
+            UIColor.red.set()
+            context.stroke(CGRect(origin: .zero, size: size))
+            
+            let text = "Страница \(pageIndex + 1)\n\(reason)"
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.systemFont(ofSize: 20),
+                .foregroundColor: UIColor.red
+            ]
+            
+            let textSize = text.size(withAttributes: attributes)
+            let textRect = CGRect(
+                x: (size.width - textSize.width) / 2,
+                y: (size.height - textSize.height) / 2,
+                width: textSize.width,
+                height: textSize.height
+            )
+            
+            text.draw(in: textRect, withAttributes: attributes)
+        }
+    }
     
     deinit {
         progressiveLoadingTask?.cancel()
+        
+        // Clean up memory monitoring
+        memoryPressureSource?.cancel()
+        memoryPressureSource = nil
+        
+        // Clear all caches
+        imageCache.removeAll()
+        continuousImages.removeAll()
+        cacheAccessOrder.removeAll()
         
         if let context = djvuContext {
             djvu_context_cleanup(context)
@@ -697,5 +852,7 @@ class DJVUDocument: ObservableObject {
         if let tempURL = tempFileURL {
             try? FileManager.default.removeItem(at: tempURL)
         }
+        
+        print("🧹 DJVUDocument deallocated, memory cleaned up")
     }
 }

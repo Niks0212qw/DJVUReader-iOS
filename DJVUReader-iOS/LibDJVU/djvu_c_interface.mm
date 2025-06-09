@@ -189,6 +189,19 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
+    // Validate dimensions to prevent memory issues
+    if (width <= 0 || height <= 0 || width > 10000 || height > 10000) {
+        NSLog(@"❌ Invalid or too large dimensions: %dx%d", width, height);
+        return -1;
+    }
+    
+    // Check if the total memory requirement is reasonable (max ~100MB)
+    long long total_pixels = (long long)width * height;
+    if (total_pixels > 25000000) { // 25M pixels = ~100MB
+        NSLog(@"❌ Image too large: %lld pixels would require too much memory", total_pixels);
+        return -1;
+    }
+    
     if (ctx->is_pdf) {
         NSLog(@"📄 PDF rendering delegated to PDFKit");
         return -2;
@@ -199,11 +212,11 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
         return -1;
     }
     
-    NSLog(@"🎨 Rendering DJVU page %d at %dx%d", page_index + 1, width, height);
+    NSLog(@"🎨 Rendering DJVU page %d at %dx%d (%lld pixels)", page_index + 1, width, height, total_pixels);
     
     ddjvu_page_t* page = ddjvu_page_create_by_pageno(ctx->document, page_index);
     if (!page) {
-        NSLog(@"❌ Failed to create page object");
+        NSLog(@"❌ Failed to create page object for page %d", page_index + 1);
         return -1;
     }
     
@@ -211,32 +224,37 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
     int page_timeout_count = 0;
     const int max_page_timeout = 100;
     
+    bool page_ready = false;
     while (page_timeout_count < max_page_timeout) {
-        message = ddjvu_message_peek(ctx->ddjvu_context);
-        if (!message) {
-            usleep(100000);
-            page_timeout_count++;
-            continue;
-        }
+        ddjvu_status_t status = ddjvu_page_decoding_status(page);
         
-        if (message->m_any.tag == DDJVU_PAGEINFO) {
-            if (message->m_any.page == page) {
-                NSLog(@"✅ Page info received");
-                ddjvu_message_pop(ctx->ddjvu_context);
-                break;
-            }
-        } else if (message->m_any.tag == DDJVU_ERROR) {
-            NSLog(@"❌ Page error: %s", message->m_error.message);
-            ddjvu_message_pop(ctx->ddjvu_context);
+        if (status == DDJVU_JOB_OK) {
+            NSLog(@"✅ Page %d decoded successfully", page_index + 1);
+            page_ready = true;
+            break;
+        } else if (status == DDJVU_JOB_FAILED || status == DDJVU_JOB_STOPPED) {
+            NSLog(@"❌ Page %d decoding failed with status: %d", page_index + 1, status);
             ddjvu_page_release(page);
             return -1;
         }
-        ddjvu_message_pop(ctx->ddjvu_context);
+        
+        message = ddjvu_message_peek(ctx->ddjvu_context);
+        if (message) {
+            if (message->m_any.tag == DDJVU_ERROR) {
+                NSLog(@"❌ Page %d error: %s", page_index + 1, message->m_error.message);
+                ddjvu_message_pop(ctx->ddjvu_context);
+                ddjvu_page_release(page);
+                return -1;
+            }
+            ddjvu_message_pop(ctx->ddjvu_context);
+        }
+        
+        usleep(100000);
         page_timeout_count++;
     }
     
-    if (page_timeout_count >= max_page_timeout) {
-        NSLog(@"❌ Timeout waiting for page info");
+    if (!page_ready) {
+        NSLog(@"❌ Timeout waiting for page %d to decode (status: %d)", page_index + 1, ddjvu_page_decoding_status(page));
         ddjvu_page_release(page);
         return -1;
     }
@@ -254,10 +272,11 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
     ddjvu_format_set_row_order(format, 1);
     ddjvu_format_set_y_direction(format, 1);
     
-    int rgb_size = width * height * 3;
-    unsigned char* rgb_buffer = (unsigned char*)malloc(rgb_size);
+    // Use safer memory allocation with error checking
+    size_t rgb_size = (size_t)width * height * 3;
+    unsigned char* rgb_buffer = (unsigned char*)calloc(rgb_size, 1);
     if (!rgb_buffer) {
-        NSLog(@"❌ Failed to allocate RGB buffer");
+        NSLog(@"❌ Failed to allocate RGB buffer of size %zu bytes", rgb_size);
         ddjvu_format_release(format);
         ddjvu_page_release(page);
         return -1;
@@ -267,12 +286,17 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
                                    width * 3, (char*)rgb_buffer);
     
     if (result) {
-        for (int i = 0; i < width * height; i++) {
+        // Convert RGB to RGBA safely
+        size_t total_pixels = (size_t)width * height;
+        for (size_t i = 0; i < total_pixels; i++) {
             pixel_buffer[i * 4 + 0] = rgb_buffer[i * 3 + 0];
             pixel_buffer[i * 4 + 1] = rgb_buffer[i * 3 + 1];
             pixel_buffer[i * 4 + 2] = rgb_buffer[i * 3 + 2];
             pixel_buffer[i * 4 + 3] = 255;
         }
+        NSLog(@"✅ DJVU page %d rendered successfully (%zu pixels)", page_index + 1, total_pixels);
+    } else {
+        NSLog(@"❌ ddjvu_page_render failed for page %d", page_index + 1);
     }
     
     free(rgb_buffer);
@@ -280,13 +304,7 @@ int32_t djvu_render_page_to_buffer(djvu_context_t* ctx, int32_t page_index,
     ddjvu_format_release(format);
     ddjvu_page_release(page);
     
-    if (result) {
-        NSLog(@"✅ DJVU page %d rendered successfully", page_index + 1);
-        return 0;
-    } else {
-        NSLog(@"❌ Failed to render DJVU page %d", page_index + 1);
-        return -1;
-    }
+    return result ? 0 : -1;
 }
 
 int32_t djvu_is_pdf_document(djvu_context_t* ctx) {
