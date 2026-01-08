@@ -1,124 +1,124 @@
-# DJVU Reader для iOS
+# DJVU Reader for iOS
 
-Современный iOS просмотрщик DJVU документов с интеграцией библиотеки djvulibre.
+A modern iOS DJVU document viewer with djvulibre library integration.
 
-## ✨ Особенности
+## ✨ Features
 
-- 📱 **Нативная iOS поддержка** - оптимизировано для iPhone и iPad
-- 📄 **Отображение DJVU файлов** - интеграция с djvulibre 3.5.28
-- 🔍 **Гибкое масштабирование** - от 50% до 300% с плавными анимациями
-- 👆 **Интуитивные жесты** - пинч, двойное касание, свайпы
-- 🚀 **Высокая производительность** - оптимизированная обработка файлов
+- 📱 **Native iOS Support** - optimized for iPhone and iPad
+- 📄 **DJVU File Display** - integration with djvulibre 3.5.28
+- 🔍 **Flexible Zooming** - from 50% to 300% with smooth animations
+- 👆 **Intuitive Gestures** - pinch, double tap, swipes
+- 🚀 **High Performance** - optimized file processing
 
-## 🖼️ Скриншоты
+## 🖼️ Screenshots
 
-### Начальная страница
+### Start Page
 <img src= "https://github.com/user-attachments/assets/d4d23ae6-dd81-47c6-b482-412761cb8c89" width = "325">
 
-### Режим постраничного просмотра
+### Page-by-Page View Mode
 <img src = "https://github.com/user-attachments/assets/1f202185-fd52-411a-8b93-bf812e9a3466" width = "325">
 
-### Режим непрерывного просмотра
+### Continuous View Mode
 <img src = "https://github.com/user-attachments/assets/9b032b2f-a3f0-418c-82ed-380636721e85" width ="325">
 
-## 📥 Установка
+## 📥 Installation
 
-### Через TestFlight
-*Скоро будет доступно*
+### Via TestFlight
+*Coming soon*
 
-### Сборка из исходного кода
+### Building from Source Code
 
-#### Системные требования
-- **Для разработки:**
-  - macOS 13.0 или выше
-  - Xcode 15.0 или выше
+#### System Requirements
+- **For Development:**
+  - macOS 13.0 or higher
+  - Xcode 15.0 or higher
   - iOS Deployment Target: 16.0+
 
-- **Для использования:**
-  - iPhone: iOS 16.0 или выше
-  - iPad: iPadOS 16.0 или выше
+- **For Usage:**
+  - iPhone: iOS 16.0 or higher
+  - iPad: iPadOS 16.0 or higher
 
-#### Инструкции по сборке
+#### Build Instructions
 
-1. **Клонируйте репозиторий**:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/YOUR_USERNAME/DJVUReader-iOS.git
    cd DJVUReader-iOS
    ```
 
-2. **Откройте в Xcode**:
+2. **Open in Xcode**:
    ```bash
    open DJVUReader-iOS.xcodeproj
    ```
 
-3. **Соберите и запустите**:
-   - Выберите симулятор или устройство
-   - Нажмите ⌘+R для запуска
+3. **Build and run**:
+   - Select simulator or device
+   - Press ⌘+R to run
 
-## 📖 Использование
+## 📖 Usage
 
-1. **Открытие файла**: Нажмите 📁 для выбора DJVU или PDF файла
-2. **Масштабирование**: 
-   - Кнопки [-🔍][+🔍] для точного управления
-   - Жест пинч для свободного масштабирования
-   - Двойное касание для быстрого переключения 100%↔200%
-3. **Навигация**: Используйте кнопки [←][→] или свайпы
-4. **Сброс**: Кнопка [📐] возвращает к 100% и центрирует страницу
+1. **Opening a File**: Tap 📁 to select a DJVU or PDF file
+2. **Zooming**: 
+   - Buttons [-🔍][+🔍] for precise control
+   - Pinch gesture for free zooming
+   - Double tap for quick toggle 100%↔200%
+3. **Navigation**: Use buttons [←][→] or swipes
+4. **Reset**: Button [📐] returns to 100% and centers the page
 
-## 🏗️ Архитектура
+## 🏗️ Architecture
 
-### Основные компоненты
+### Main Components
 
 ```
 DJVUReader-iOS/
-├── 📱 DJVUReader_iOSApp.swift    # Точка входа
-├── 🎨 ContentView.swift          # Основной UI с плавающими элементами
-├── 📄 DJVUDocument.swift         # Модель документа
-└── 📚 LibDJVU/                   # Интеграция djvulibre
+├── 📱 DJVUReader_iOSApp.swift    # Entry point
+├── 🎨 ContentView.swift          # Main UI with floating elements
+├── 📄 DJVUDocument.swift         # Document model
+└── 📚 LibDJVU/                   # djvulibre integration
     ├── djvu_c_interface.h/mm     # C++ bridge
     ├── DJVUNativeReader.swift    # Swift wrapper
     └── include/libdjvu/          # djvulibre headers
 ```
 
-### Технологии
+### Technologies
 
-- **SwiftUI** - современный UI framework
-- **djvulibre 3.5.28** - рендеринг DJVU документов
-- **PDFKit** - поддержка PDF файлов
-- **Objective-C++** - мост между Swift и C++
+- **SwiftUI** - modern UI framework
+- **djvulibre 3.5.28** - DJVU document rendering
+- **PDFKit** - PDF file support
+- **Objective-C++** - bridge between Swift and C++
 
-## ⚙️ Техническая реализация
+## ⚙️ Technical Implementation
 
-### DJVU интеграция
-- ✅ Библиотека djvulibre 
-- ✅ Оптимизированная для iOS sandbox
-- ✅ Таймауты и обработка ошибок
-- ✅ Многопоточная обработка
+### DJVU Integration
+- ✅ djvulibre library
+- ✅ Optimized for iOS sandbox
+- ✅ Timeouts and error handling
+- ✅ Multithreaded processing
 
-### Масштабирование
-- **Диапазон**: 50% - 300%
-- **По умолчанию**: 100%
-- **Шаг кнопок**: 25%
-- **Автосброс**: при смене страниц
+### Zooming
+- **Range**: 50% - 300%
+- **Default**: 100%
+- **Button Step**: 25%
+- **Auto-reset**: when changing pages
 
-## 🔧 Сборка djvulibre
+## 🔧 Building djvulibre
 
-Проект включает автоматическую сборку djvulibre для iOS:
+The project includes automatic djvulibre building for iOS:
 
 ```bash
 ./build_djvulibre_ios.sh
 ```
 
-Скрипт автоматически:
-- Загружает djvulibre 3.5.28
-- Компилирует для iOS Simulator (arm64, x86_64)
-- Создает универсальную библиотеку
-- Копирует в проект
+The script automatically:
+- Downloads djvulibre 3.5.28
+- Compiles for iOS Simulator (arm64, x86_64)
+- Creates universal library
+- Copies to project
 
-## 📄 Лицензия
+## 📄 License
 
-Этот проект распространяется под лицензией MIT. См. файл [LICENSE](LICENSE) для получения дополнительной информации.
+This project is distributed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
-## 👨‍💻 Автор
+## 👨‍💻 Author
 
 **Nikita Krivonosov** - nikskrivonosovv@gmail.com
